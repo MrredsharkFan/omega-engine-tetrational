@@ -71,20 +71,25 @@ class Generator
                 }
             }
         }
+        if (this.layer.layer === 0) {
+            multi = multi.pow(game.alephLayer.upgrades.PowerLayers.apply())
+        }
         const challengePow = game.currentChallenge && game.currentChallenge.effectType === CHALLENGE_EFFECT_GENMULTI ? game.currentChallenge.applyEffect() : 1;
-        return (Decimal.pow(f, Decimal.floor(this.bought.div(10))).mul(multi)).pow(challengePow);
+        var s = (Decimal.pow(f, Decimal.floor(this.bought.div(10))).mul(multi)).pow(challengePow);
+        return s
     }
 
     getProductionPS()
     {
-        return this.amount.mul(this.getProductionMulti()).mul(this.baseProduction);
+        var s = this.amount.mul(this.getProductionMulti()).mul(this.baseProduction);
+        return s
     }
 
     getPrice(bought)
     {
         const power = game.currentChallenge && game.currentChallenge.effectType === CHALLENGE_EFFECT_PRICES_POWER ? game.currentChallenge.applyEffect() : new Decimal(1);
         const base = new Decimal(this.initPrice).mul(Decimal.pow(this.priceIncrease, Decimal.floor(bought.div(10))));
-        return Utils.createValueDilation(base, 0.0075).pow(power);
+        return Utils.createValueDilation(base, 0.0075).pow(power).root(game.alephLayer.upgrades.CheapGen.apply());
     }
 
     currentPrice()

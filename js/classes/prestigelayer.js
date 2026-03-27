@@ -201,7 +201,7 @@ class PrestigeLayer
             {
                 case UPGRADE_RESOURCE:
                     upg = new LayerUpgrade(this, game.layers[0] || this,
-                        level => Utils.createValueDilation(Decimal.pow(3 * i + 7 + extraPriceIncrease, level).mul(bp), 0.01).pow(LayerUpgrade.getPricePower()),
+                        level => Utils.createValueDilation(Decimal.pow(3 * i + 10 + extraPriceIncrease, level).mul(bp), 0.02).pow(LayerUpgrade.getPricePower()),
                         level => Decimal.pow(effectGenerator, level).pow(extraPow).pow(LayerUpgrade.getEffectPower()), UPGRADE_RESOURCE);
                     break;
                 case UPGRADE_GENERATOR:
@@ -257,7 +257,7 @@ class PrestigeLayer
             power = Decimal.pow(this.getExponentialBoostFactor(), diff - 1).mul(2);
         }
         const challengePow = game.currentChallenge && game.currentChallenge.type === CHALLENGE_EFFECT_PRICES_POWER ? game.currentChallenge.applyEffect().pow(-1) : 1;
-        return this.power.add(1).pow(power.mul(1.38)).pow(challengePow);
+        return Decimal.tetrate(10,this.power.add(1).pow(power.mul(1.38)).pow(challengePow).slog().add(this.layer / 10));
     }
 
     hasPower()
@@ -299,7 +299,7 @@ class PrestigeLayer
         }
         const boostRes = Decimal.min(this.resource, mod.Infinities[0]).mul(Decimal.pow(Decimal.max(1, this.resource.div(mod.Infinities[0])), 0.2));
         const challengePow = game.currentChallenge && game.currentChallenge.type === CHALLENGE_EFFECT_UPGRADESTRENGTH_SIMPLEBOOST ? game.currentChallenge.applyEffect() : 1;
-        const boost = boostRes.add(1).pow(2 * Math.pow(this.getExponentialBoostFactor(), this.layer - 1)).pow(challengePow);
+        const boost = Decimal.tetrate(10,boostRes.add(1).pow(2 * Math.pow(this.getExponentialBoostFactor(), this.layer - 1)).pow(challengePow).slog().add(this.layer / 11));
         return this.hasSimpleBoost() ? boost : new Decimal(1);
     }
 
@@ -586,7 +586,7 @@ class PrestigeLayer
         {
             power *= game.alephLayer.upgrades.betterBetaFormula.apply().toNumber();
         }
-        return Decimal.pow(this.resource.div(lim), 1 / this.getPrestigeCarryOver() * power).mul(multi).floor();
+        return Decimal.tetrate(10,Decimal.pow(this.resource.div(lim), 1 / this.getPrestigeCarryOver() * power).mul(multi).slog().sub(this.layer / 9).pow(0.95)).floor();
     }
 
     isNonVolatile()

@@ -37,6 +37,7 @@ const functions = {
             }
             return Decimal.pow(10, mag % 1).toFixed(prec) + "e" + Math.floor(mag).toLocaleString("en-us", {minimumFractionDigits:0 , maximumFractionDigits:0});
         }
+        if (n.layer>10){return `E${this.formatNumber(n.mag,3)}#${this.formatNumber(n.layer)}`}
         return "e".repeat(n.layer) + n.mag.toLocaleString("en-us", {minimumFractionDigits: prec , maximumFractionDigits: prec});
     },
     formatTime: function(s)

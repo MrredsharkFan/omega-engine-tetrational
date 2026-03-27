@@ -29,7 +29,7 @@ Vue.component("aleph-layer", {
         <p>Your highest Layer is <resource-name :layerid="highestLayer()"></resource-name>, translated to a x{{formatNumber(aleph.getAlephBoostFromLayer(), 2, 2)}} Boost on <span class="aleph">ℵ</span> gain</p>
     </div>
     <div v-else>
-        <p>You need to go <resource-name :layerid="3"></resource-name> at least once to get <span class="aleph">ℵ</span></p>
+        <p>You need to go <resource-name :layerid="2"></resource-name> at least once to get <span class="aleph">ℵ</span></p>
     </div>
 </div>
 <div class="tabs">
@@ -49,6 +49,11 @@ Vue.component("aleph-layer", {
     <aleph-upgrade :upgrade="aleph.upgrades.alephBoost2"></aleph-upgrade>
     <aleph-upgrade :upgrade="aleph.upgrades.prestigeRewards"></aleph-upgrade>
     <aleph-upgrade :upgrade="aleph.upgrades.layerExponentialBoost"></aleph-upgrade>
+    <aleph-upgrade :upgrade="aleph.upgrades.PowerLayers"></aleph-upgrade>
+    <aleph-upgrade :upgrade="aleph.upgrades.CheapGen"></aleph-upgrade>
+    <aleph-upgrade :upgrade="aleph.upgrades.AlephBoost3"></aleph-upgrade>
+    <aleph-upgrade :upgrade="aleph.upgrades.ChalComp"></aleph-upgrade>
+    <aleph-upgrade :upgrade="aleph.upgrades.GenCoin"></aleph-upgrade>
 </div>
 </div>`
 });

@@ -25,15 +25,15 @@ class Utils
         let interval = lvl / 2;
         while(interval > 1e-16)
         {
-            const price = !(buyable instanceof MetaDynamicLayerUpgrade) ? buyable.getPrice(Decimal.pow(10, lvl)) : buyable.getLayer(Decimal.pow(10, lvl));
+            const price = !(buyable instanceof MetaDynamicLayerUpgrade) ? buyable.getPrice(Decimal.tetrate(10, lvl-1)) : buyable.getLayer(Decimal.tetrate(10, lvl-1));
             const canAfford = r.gte(price);
             lvl += canAfford ? interval : -interval;
             interval /= 2;
         }
-        let finalLvl = Decimal.pow(10, lvl).floor();
+        let finalLvl = Decimal.tetrate(10, lvl-1).floor();
         if(buyable instanceof AbstractUpgrade)
         {
-            finalLvl = Decimal.min(finalLvl, buyable.maxLevel);
+            finalLvl = Decimal.min(finalLvl-1, buyable.maxLevel);
         }
         return Decimal.max(buyable[buyable instanceof AbstractUpgrade ? "level" : "bought"], finalLvl);
     }

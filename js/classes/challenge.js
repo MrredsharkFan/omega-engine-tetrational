@@ -22,12 +22,12 @@ class Challenge
 
     applyEffect()
     {
-        return this.getEffect(this.level);
+        return this.getEffect(new Decimal(this.level).mul(game.alephLayer.upgrades.ChalComp.apply()));
     }
 
     applyReward()
     {
-        return this.getReward(this.level);
+        return this.getReward(new Decimal(this.level).mul(game.alephLayer.upgrades.ChalComp.apply()));
     }
 
     getDescription()

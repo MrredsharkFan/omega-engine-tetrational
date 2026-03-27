@@ -12,8 +12,8 @@ class AlephLayer
                     getEffectDisplay: effectDisplayTemplates.percentStandard(3, "", " %", 0)
                 }),
             alephBoost: new AlephUpgrade("Gain more aleph based on the log(ℵ) you have",
-                level => new Decimal(1e6).pow(Decimal.pow(1.5, level)),
-                level => new Decimal(1).add(Decimal.max(0, game.alephLayer.aleph).add(1).log10().mul(level).mul(0.05)).pow(2.5)),
+                level => new Decimal(10).pow(Decimal.pow(1.125, level).add(level)).times(10),
+                level => new Decimal(1).add(Decimal.max(0, game.alephLayer.aleph).add(1).log10()).pow(level.add(1).log10().add(1))),
             deltaBoost: new AlephUpgrade("Gain more &delta;",
                 level => Decimal.pow(1e5, level).mul(1e3),
                 level => Decimal.pow(10, level), {
@@ -21,15 +21,15 @@ class AlephLayer
                 }),
             powerGenerators: new AlephUpgrade("All Power Generators on every Layer are stronger",
                 level => Utils.createValueDilation(Decimal.pow(1e5, Decimal.pow(level, 1.5)).mul(1e20), 0.001),
-                level => Decimal.pow(1.5, level)),
+                level => Decimal.pow(1.5, level).tetrate(level.add(10).slog())),
             prestigeNoPowerBoost: new AlephUpgrade("Increase Prestige Reward on all Layers that don't have Power Generators",
                 level => Decimal.pow(1e8, level).mul(1e22),
                 level => Decimal.pow(2, level), {
                     maxLevel: 3
                 }),
-            alephBoost2: new AlephUpgrade("Gain more aleph based on the log(log(&alpha;)) you have",
+            alephBoost2: new AlephUpgrade("Gain more aleph based on the slog(&alpha;) you have",
                 level => Utils.createValueDilation(Decimal.pow(1e30, level).mul(1e100), 0.01),
-                level => game.layers[0] ? Decimal.pow(new Decimal(1.1).add(level.mul(0.1)), Decimal.max(0, game.layers[0].resource).add(1).log10().add(1).log10()) : new Decimal(1)),
+                level => game.layers[0] ? Decimal.pow(new Decimal(1.1).add(level.mul(0.1)), Decimal.max(0, game.layers[0].resource).add(10).slog().pow(1.25)).pow(game.alephLayer.upgrades.AlephBoost3.apply()) : new Decimal(1)),
             betterBetaFormula: new AlephUpgrade("The &beta; Prestige Formula is better",
                 level => new Decimal(1e90),
                 level => new Decimal(1).add(level.mul(0.12)), {
@@ -44,7 +44,32 @@ class AlephLayer
                 level => [22, 25, 27][level.toNumber()], {
                     maxLevel: 2,
                     getEffectDisplay: effectDisplayTemplates.numberStandard(0, "")
-                })
+            }),
+            PowerLayers: new AlephUpgrade("&alpha; generators are better based on aleph.",
+                level => Decimal.pow(120,level.add(1).pow(1.5)).times("1e40"),
+                level => level.div(5).add(1).pow(game.alephLayer.aleph.add(1).slog().sub(0.5)), {
+                getEffectDisplay: effectDisplayTemplates.numberStandard(3, "^")
+            }),
+            CheapGen: new AlephUpgrade("All generators are cheaper.",
+                level => Decimal.pow(80, level.add(2).pow(2)).times("1e150"),
+                level => level.times(1.1), {
+                getEffectDisplay: effectDisplayTemplates.numberStandard(4, "^")
+            }),
+            AlephBoost3: new AlephUpgrade("'Gain more aleph based on &alpha;' upgrade is stronger.",
+                level => Decimal.pow(1000, level.add(2).pow(2)).times("1e210"),
+                level => level.add(1).log10().add(1).pow(4), {
+                getEffectDisplay: effectDisplayTemplates.numberStandard(4, "^")
+            }),
+            ChalComp: new AlephUpgrade("Challenges act like they have been completed *x more times.",
+                level => Decimal.pow(100, level.add(2).pow(0.7).add(level).pow(1.25)).times("1e270"),
+                level => level.pow(0.25), {
+                getEffectDisplay: effectDisplayTemplates.numberStandard(3, "*")
+            }),
+            GenCoin: new AlephUpgrade("Power generators are boosted by their own layer coin.",
+                level => Decimal.pow(100, level.add(1).pow(1.5)).times("1e280"),
+                level => level.add(1).pow(0.25).sub(1), {
+                getEffectDisplay: effectDisplayTemplates.numberStandard(3, "*x^")
+            })
         };
     }
 
@@ -58,14 +83,14 @@ class AlephLayer
 
     isUnlocked()
     {
-        return game.highestLayer >= 3;
+        return game.highestLayer >= 2;
     }
 
     getAlephBoostFromLayer()
     {
-        if(functions.maxLayerUnlocked() < 3) return new Decimal(0);
-        if(game.layers[3].timesReset === 0) return new Decimal(0);
-        return Decimal.pow(10, Math.max(0, functions.maxLayerUnlocked() - 3));
+        if(functions.maxLayerUnlocked() < 2) return new Decimal(0);
+        if(game.layers[2].timesReset === 0) return new Decimal(0);
+        return Decimal.pow(10, Math.max(0, functions.maxLayerUnlocked() - 2));
     }
 
     maxAll()
